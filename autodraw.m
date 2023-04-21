@@ -17,13 +17,13 @@ close
 clc
 %画空闲节点
 hold off
-for i = 1:3192
+for i = 1:size(data_ob,1)
 x = data_ob(i, 1);
 y = data_ob(i, 2);
 z = data_ob(i, 3);
-size=data_ob(i,4);
+size1=data_ob(i,4);
 i_voxel = [x, y, z];
-d_voxel = [size, size, size];
+d_voxel = [size1, size1, size1];
 %指定颜色和透明度
 voxel(i_voxel,d_voxel,[0.4660 0.6740 0.1880],0.03)
 end
