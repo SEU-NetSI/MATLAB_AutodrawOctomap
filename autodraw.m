@@ -1,9 +1,10 @@
+flipud(color_matrix);
 %%把csv放入工作区，直接右键导入数据，导入成字符串矩阵，命名为simulatoroctoMap1
 data_str=simulatoroctoMap1(:,[1,3,4,5,6,7]);
 %空闲节点提取
-data_str_ob=data_str(find(data_str(:,1)=="FN"),:);
+data_str_ob=data_str(find(data_str(:,1)=="SP"),:);
 %占据节点提取
-data_str_em=data_str(find(data_str(:,1)=="ON"),:);
+data_str_em=data_str(find(data_str(:,1)=="EP"),:);
 %节点处理
 data_ob=data_str_ob(:,[2,3,4,5,6]);
 data_em=data_str_em(:,[2,3,4,5,6]);
@@ -11,7 +12,7 @@ str2double(data_ob);
 data_em=str2double(data_em);
 data_ob=str2double(data_ob);
 %去掉盖子
-data_em = data_em(data_em(:,3) ~= 80, :);
+data_em = data_em(data_em(:,3) <75, :);
 %清空工作区
 close
 clc
@@ -25,14 +26,15 @@ size1=data_ob(i,4);
 i_voxel = [x, y, z];
 d_voxel = [size1, size1, size1];
 %指定颜色和透明度
-voxel(i_voxel,d_voxel,[0.4660 0.6740 0.1880],0.03)
+%voxel(i_voxel,d_voxel,[0.4660 0.6740 0.1880],0.3)
+voxel(i_voxel,d_voxel,'w',0.25)
 end
 hold on
 %%导入颜色矩阵，命名为color（n行3列，0-1之间）
 %%把障碍物节点进行n_bin等分
 [~, idx] = sort(data_em(:, 3));
 data_em = data_em(idx, :);
-n_bins = 15;
+n_bins = 16;
 edges = linspace(min(data_em(:, 3)), max(data_em(:, 3)), n_bins+1);
 counts = histcounts(data_em(:, 3), edges);
 groups = findgroups(discretize(data_em(:, 3), edges));
@@ -66,15 +68,18 @@ for j = 1:numel(split_em)
         size1=sp_em(i,4);
         i_voxel = [x, y, z];
         d_voxel = [size1, size1, size1];
-        voxel_ob(i_voxel,d_voxel,color,1)
+        voxel_ob(i_voxel,d_voxel,color,0.8)
     end
     hold on
 end
 
 %图像调整
 view(45,45)
-camlight('right') 
+light;
+light;
+light('Position',[1 0 0],'Style','infinite') % 添加位于x轴正方向的白色光源
+light('Position',[0 -1 0],'Style','infinite') % 添加位于x轴正方向的白色光源
 fig = gcf; % 获取当前图形句柄
-filename = 'myplot.png'; % 保存文件名
-saveas(fig, filename, 'png'); % 保存为PNG格式图片
+filename = 'figure5-1.fig'; % 保存文件名
+saveas(fig, filename, 'fig'); % 保存为PNG格式图片
 hold off
